@@ -13,6 +13,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TagsInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Group;
+use Illuminate\Validation\Rules\Unique;
 
 
 class PostForm
@@ -20,79 +21,50 @@ class PostForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->columns(3)
             ->components([
-                // SECTION KIRI - Content (2/3 width)
-                Section::make('Content')
-                    ->description('Write your post content here')
-                    ->icon('heroicon-o-pencil-square')
+
+                Section::make('Post Details')
+                    ->description('Fill in the details of the post.')
+                    ->icon('heroicon-o-document-text')
                     ->schema([
                         Group::make([
                             TextInput::make('title')
-                                ->label('Title')
-                                ->required()
-                                ->placeholder('Post title'),
+                                ->rules('required | min:3 | max:10')
+                                ->maxLength(255),
                             TextInput::make('slug')
-                                ->label('Slug')
-                                ->required()
-                                ->placeholder('post-slug'),
-                        ])->columns(2),
-
-                        Group::make([
+                                ->rules('required ')
+                                ->unique()
+                                ->validationMessages([
+                                    'unique' => 'Slug harus unik dan tidak boleh sama.'
+                                ]),
                             Select::make('category_id')
                                 ->label('Category')
                                 ->relationship('category', 'name')
+                                ->required()
                                 ->preload()
-                                ->searchable()
-                                ->required(),
-                            ColorPicker::make('color')
-                                ->label('Accent Color')
-                                ->nullable(),
+                                ->searchable(),
+                            ColorPicker::make('color'),
                         ])->columns(2),
+                        MarkdownEditor::make('content'),
+                    ])->columnSpan(2),
 
-                        MarkdownEditor::make('body')
-                            ->label('Body Content')
-                            ->required()
-                            ->columnSpanFull(),
-                    ])
-                    ->columnSpan(2),
-
-                // SECTION KANAN - Meta Information (1/3 width)
                 Group::make([
-                    Section::make('Media')
-                        ->description('Upload featured image')
-                        ->icon('heroicon-o-photo')
-                        ->schema([
-                            FileUpload::make('image')
-                                ->label('Featured Image')
-                                ->disk('public')
-                                ->directory('posts')
-                                ->image()
-                                ->nullable()
-                                ->columnSpanFull(),
-                        ]),
+                    Section::make('Image Upload')->schema([
+                        FileUpload::make('image')
+                            ->required()
+                            ->disk('public')
+                            ->directory('posts'),
+                    ]),
 
-                    Section::make('Publishing')
-                        ->description('Manage publication settings')
-                        ->icon('heroicon-o-megaphone')
-                        ->schema([
-                            TagsInput::make('tags')
-                                ->label('Tags')
-                                ->nullable()
-                                ->columnSpanFull(),
+                    Section::make('Meta Information')->schema([
+                        // RichEditor::make('content'),
+                        TagsInput::make('tags'),
+                        Checkbox::make('published'),
+                    ])->columns(1),
 
-                            Checkbox::make('published')
-                                ->label('Publish this post')
-                                ->default(false)
-                                ->columnSpanFull(),
+                    DateTimePicker::make('published_at'),
+                ]),
 
-                            DateTimePicker::make('published_at')
-                                ->label('Publish Date & Time')
-                                ->nullable()
-                                ->columnSpanFull(),
-                        ]),
-                ])
-                ->columnSpan(1),
-            ]);
+            ])->columns(3);
     }
 }
