@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Posts\Tables;
 
+use App\Models\Category;
+
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteBulkAction;
@@ -82,8 +84,9 @@ class PostsTable
                     }),
                 SelectFilter::make("category_id")
                     ->relationship("category", "name")
-                    ->Label("Category")
-                    ->preload(),
+                    ->options(Category::all()->pluck("name", "id"))
+                    ->Label("Category"),
+                // ->preload(),
             ])
             ->recordActions([
                 ReplicateAction::make(),

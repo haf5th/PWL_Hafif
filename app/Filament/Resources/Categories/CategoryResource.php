@@ -14,13 +14,15 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
+use App\Filament\Resources\Categories\RelationManagers\PostsRelationManager;
+
 class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute = "name";
 
     public static function form(Schema $schema): Schema
     {
@@ -34,17 +36,15 @@ class CategoryResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [PostsRelationManager::class];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListCategories::route('/'),
-            'create' => CreateCategory::route('/create'),
-            'edit' => EditCategory::route('/{record}/edit'),
+            "index" => ListCategories::route("/"),
+            "create" => CreateCategory::route("/create"),
+            "edit" => EditCategory::route("/{record}/edit"),
         ];
     }
 }

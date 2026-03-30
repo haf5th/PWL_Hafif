@@ -15,6 +15,8 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Group;
 use Illuminate\Validation\Rules\Unique;
 
+use App\Models\Category;
+
 class PostForm
 {
     public static function configure(Schema $schema): Schema
@@ -39,8 +41,9 @@ class PostForm
                             Select::make("category_id")
                                 ->label("Category")
                                 ->relationship("category", "name")
+                                ->options(Category::all()->pluck("name", "id"))
                                 ->required()
-                                ->preload()
+                                // ->preload()
                                 ->searchable(),
                             ColorPicker::make("color"),
                         ])->columns(2),
