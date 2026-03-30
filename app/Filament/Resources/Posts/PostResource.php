@@ -1,5 +1,5 @@
 <?php
-
+// test
 namespace App\Filament\Resources\Posts;
 
 use App\Filament\Resources\Posts\Pages\CreatePost;
@@ -20,7 +20,7 @@ class PostResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $recordTitleAttribute = 'title';
+    protected static ?string $recordTitleAttribute = "title";
 
     public static function form(Schema $schema): Schema
     {
@@ -35,16 +35,16 @@ class PostResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
-        ];
+                //
+            ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => ListPosts::route('/'),
-            'create' => CreatePost::route('/create'),
-            'edit' => EditPost::route('/{record}/edit'),
+            "index" => ListPosts::route("/"),
+            "create" => CreatePost::route("/create"),
+            "edit" => EditPost::route("/{record}/edit"),
         ];
     }
 }
