@@ -4,11 +4,13 @@ namespace App\Filament\Resources\Posts\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Forms\Components\DatePicker;
@@ -20,15 +22,43 @@ class PostsTable
         return $table
             ->columns([
                 //
-                TextColumn::make("title")->sortable()->searchable(),
-                TextColumn::make("slug")->sortable()->searchable(),
-                TextColumn::make("category.name")->sortable()->searchable(),
-                ColorColumn::make("color"),
-                ImageColumn::make("image")->disk("public"),
+                TextColumn::make("id")
+                    ->Label("ID")
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make("title")
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                TextColumn::make("slug")
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                TextColumn::make("category.name")
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                ColorColumn::make("color")->toggleable(),
+                ImageColumn::make("image")->disk("public")->toggleable(),
                 TextColumn::make("created_at")
                     ->Label("Created At")
                     ->sortable()
-                    ->dateTime(),
+                    ->dateTime()
+                    ->toggleable(),
+                TextColumn::make("tags")
+                    ->Label("Tags")
+                    ->toggleable(isToggledHiddenByDefault: true),
+                IconColumn::make("published")
+                    ->Label("Published")
+                    ->boolean()
+                    ->trueIcon("heroicon-o-check-circle")
+                    ->falseIcon("heroicon-o-x-circle")
+                    ->color(
+                        fn(bool $state): string => $state
+                            ? "success"
+                            : "danger",
+                    )
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->defaultSort("created_at", "desc")
 
@@ -52,7 +82,7 @@ class PostsTable
                     ->Label("Category")
                     ->preload(),
             ])
-            ->recordActions([EditAction::make(), EditAction::make()])
+            ->recordActions([EditAction::make(), DeleteAction::make()])
             ->toolbarActions([
                 BulkActionGroup::make([DeleteBulkAction::make()]),
             ]);
