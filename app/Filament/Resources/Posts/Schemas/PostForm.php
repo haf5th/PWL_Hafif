@@ -41,9 +41,8 @@ class PostForm
                             Select::make("category_id")
                                 ->label("Category")
                                 ->relationship("category", "name")
-                                ->options(Category::all()->pluck("name", "id"))
                                 ->required()
-                                // ->preload()
+                                ->preload()
                                 ->searchable(),
                             ColorPicker::make("color"),
                         ])->columns(2),
@@ -62,7 +61,11 @@ class PostForm
                     Section::make("Meta Information")
                         ->schema([
                             // RichEditor::make('content'),
-                            TagsInput::make("tags"),
+                            // TagsInput::make("tags"),
+                            Select::make("tags")
+                                ->relationship("tags", "name")
+                                ->multiple()
+                                ->preload(),
                             Checkbox::make("published"),
                         ])
                         ->columns(1),
